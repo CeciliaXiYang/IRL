@@ -34,8 +34,20 @@ ALTER TABLE `problem_level` DROP  `pctCorrectCondIndeSelect`, DROP `pctCorrectCo
 SELECT count(*) AS NUMBEROFCOLUMNS FROM information_schema.columns 
 WHERE table_name ='problem_level'; 
 
-select distinct problemDecision from problem_level; 
+select distinct problemDecision from problem_level;
 
 update problem_level
-set problemDecision = step 
-where problemDeciion = Step_rand;
+set problemDecision = 'step' 
+where problemDecision like '%step%';
+
+select distinct problemDecision from problem_level
+where problemDecision like '%step%';
+
+alter table problem_level add column problemDecision_orig tinytext; 
+
+alter table problem_level 
+change column `problemDecision_orig` `problemDecision_orig` tinytext null default null after `problemDecision`; 
+
+update problem_level
+inner join problem_decisions on (problem_level.userID = problem_decisions.userID and problem_level.problem = problem_decisions.problem)
+set problem_level.problemDecision_orig = problem_decisions.problemDecision; 
